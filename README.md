@@ -1,5 +1,11 @@
-# iaaft
-Iterated Amplitude Adjusted Fourier Transform time series surrogates
+# Iterated Amplitude Adjusted Fourier Transform time series surrogates
+
+This repo implements that iterative amplitude adjusted Fourier transform
+method to generate time series surrogates (i.e randomised copies of a
+given time series) which preserve the power spectrum (and consequently
+the autocorrelation) of the original series. For a detailed discussion
+on the method, we refer to the paper by Venema, Ament & Simmer (2006)
+below.
 
 ![iaaft-surrogates-example](/example.png)
 
@@ -11,7 +17,11 @@ Iterated Amplitude Adjusted Fourier Transform time series surrogates
     in your project directory and import is a Python module with `import
     iaaft`.
 
-+ Call
++   **Prequisite Python packages**
+    - `numpy`
+    - `tqdm` (progress bar display)
+
++   **Usage:** Call
     [`iaaft.surrogates()`](https://github.com/mlcs/fekete/blob/421796cb23da0022cc28871696bd3b55ff52b77c/fekete.py#L42) with appropriate arguments.
 
 +   **Example**: The script [`example.py`](/example.py) contains a
