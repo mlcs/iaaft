@@ -14,7 +14,7 @@ iaaft - Iterative amplitude adjusted Fourier transform surrogates
 
 """
 # Created: Tue Jun 22, 2021  09:44am
-# Last modified: Tue Jun 22, 2021  10:47am
+# Last modified: Tue Jun 22, 2021  11:58am
 #
 # Copyright (C) 2021  Bedartha Goswami <bedartha.goswami@uni-tuebingen.de> This
 # program is free software: you can redistribute it and/or modify it under the
@@ -34,23 +34,39 @@ iaaft - Iterative amplitude adjusted Fourier transform surrogates
 
 import numpy as np
 from tqdm import tqdm
-from pyfftw.interfaces.scipy_fftpack import fft, ifft
-from numba import jit
 
+@profile
+def surrogates(x, ns, TOL_PC=5., verbose=True):
+    """
+    Returns iAAFT surrogates of given time series.
 
-def surrogates(x, ns, verbose=False, TOL_PC=5.):
-    """Returns NSURR number of iAAFT surrogates of given data"""
+    Parameter
+    ---------
+    x : numpy.ndarray, with shape (N,)
+        Input time series for which IAAFT surrogates are to be estimated.
+    ns : int
+        Number of surrogates to be generated.
+    tol_pc : float
+        Tolerance (in percent) level which decides the extent to which the
+        difference in the power spectrum of the surrogates to the original
+        power spectrum is allowed.
+    verbose : bool
+        Show progress bar (default = `True`).
+
+    Returns
+    -------
+    xs : numpy.ndarray, with shape (ns, N)
+        Array containing the IAAFT surrogates of `x` such that each row of `xs`
+        is an individual surrogate time series.
+    """
     # as per the steps given in Lancaster et al., Phys. Rep (2018)
     nx = x.shape[0]
     xs = np.zeros((ns, nx))
     MAX_ITER = 10000
     ii = np.arange(nx)
 
-    # allocate functions to local variables to save function call overhead
-    npexp = np.exp
-
     # get the fft of the original array
-    x_amp = np.abs(fft(x))
+    x_amp = np.abs(np.fft.fft(x))
     x_srt = np.sort(x)
     r_orig = np.argsort(x)
 
@@ -73,10 +89,10 @@ def surrogates(x, ns, verbose=False, TOL_PC=5.):
             # replacing the amplitudes with the original amplitudes but
             # keeping the angles from the FFT-ed version of the random
             y_prev = z_n
-            fft_prev = fft(y_prev)
-            phi_prev = jitangle(fft_prev)
-            e_i_phi = jitexp(phi_prev * 1j)
-            z_n = ifft(x_amp * e_i_phi)
+            fft_prev = np.fft.fft(y_prev)
+            phi_prev = np.angle(fft_prev)
+            e_i_phi = np.exp(phi_prev * 1j)
+            z_n = np.fft.ifft(x_amp * e_i_phi)
 
             # 3) rescale zk to the original distribution of x
             r_curr = np.argsort(z_n)
@@ -93,20 +109,5 @@ def surrogates(x, ns, verbose=False, TOL_PC=5.):
         xs[k] = np.real(z_n)
 
     return xs
-
-
-@jit
-def jitangle(arr):
-    """angle"""
-    return np.angle(arr)
-
-
-@jit
-def jitexp(arr):
-    """exp"""
-    return np.exp(arr)
-
-
-
 
 

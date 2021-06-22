@@ -5,8 +5,8 @@ Example usage of the IAAFT time series surrogates algorithm
 ===========================================================
 
 """
-# Last modified: Tue Jun 22, 2021  10:46am
-# Last modified: Tue Jun 22, 2021  10:46am
+# Last modified: Tue Jun 22, 2021  11:56am
+# Last modified: Tue Jun 22, 2021  11:56am
 #
 # Copyright (C) 2021  Bedartha Goswami <bedartha.goswami@uni-tuebingen.de> This
 # program is free software: you can redistribute it and/or modify it under the
@@ -25,11 +25,10 @@ Example usage of the IAAFT time series surrogates algorithm
 
 import numpy as np
 import matplotlib.pyplot as pl
-from pyfftw.interfaces.scipy_fftpack import fft, ifft
 import iaaft
 
 # generate an initial time series with AR(1) memory
-n = 1000
+n = 10000
 beta = 0.65
 eps = np.random.randn(n)
 x = np.zeros(n)
@@ -38,17 +37,17 @@ for i in range(1, n):
     x[i] = beta * x[i-1] + eps[i]
 
 # estimate the power spectra of the initial time series
-p = np.square(np.abs(fft(x)))
+p = np.square(np.abs(np.fft.fft(x)))
 freq = np.fft.fftfreq(n)
 
 # estimate 100 IAAFT surrogates
-ns = 100
+ns = 1000
 xs = iaaft.surrogates(x=x, ns=ns, verbose=True)
 
 # estimate the power spectra of the surrogates
 ps = np.zeros((ns, freq.shape[0]))
 for i in range(ns):
-    ps[i] = np.square(np.abs(fft(xs[i])))
+    ps[i] = np.square(np.abs(np.fft.fft(xs[i])))
 
 # plot the results
 ## set up the figure
