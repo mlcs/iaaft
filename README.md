@@ -38,7 +38,7 @@ _Nonlin.  Proc. Geophys._ **13**, pp. 321--328
 
 ## License
 
-[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg?style=flat-square)](https://tldrlegal.com/license/gnu-lesser-general-public-license-v3-(lgpl-3))
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg?style=flat-square)](https://github.com/mlcs/iaaft/blob/4c023a80e9e6795d315d92d1b865aab6c55d8eb1/LICENSE)
 
 - Copyright © [Bedartha Goswami](https://machineclimate.de/people/goswami/).
 
