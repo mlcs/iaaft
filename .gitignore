@@ -1,0 +1,25 @@
+# project
+_site
+.sass-cache
+.vagrant
+
+# general
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# VIM
+*.swp
+
+# Libre Office
+.~lock.*
+
+# python3
+__pycache__
+
+# kernprof i.e. line profile files
+*.lprof
+
+# ipython checkpoints
+.ipynb_checkpoints/
+
