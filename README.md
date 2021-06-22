@@ -13,8 +13,8 @@ https://doi.org/10.5194/npg-13-321-2006
 ## TODO
 
 - [x] First working implementation
-- [ ] Optimize code for faster performance
-- [ ] Documentation
-- [ ] Example
+- [x] Optimize code for faster performance
+- [x] Documentation
+- [x] Example
 - [ ] Improve README (installation, license, usage, etc.)
 

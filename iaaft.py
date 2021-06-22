@@ -14,7 +14,7 @@ iaaft - Iterative amplitude adjusted Fourier transform surrogates
 
 """
 # Created: Tue Jun 22, 2021  09:44am
-# Last modified: Tue Jun 22, 2021  12:38pm
+# Last modified: Tue Jun 22, 2021  12:39pm
 #
 # Copyright (C) 2021  Bedartha Goswami <bedartha.goswami@uni-tuebingen.de> This
 # program is free software: you can redistribute it and/or modify it under the
@@ -49,7 +49,7 @@ def surrogates(x, ns, tol_pc=5., verbose=True, maxiter=1E6, sorttype="quicksort"
     tol_pc : float
         Tolerance (in percent) level which decides the extent to which the
         difference in the power spectrum of the surrogates to the original
-        power spectrum is allowed.
+        power spectrum is allowed (default = 5).
     verbose : bool
         Show progress bar (default = `True`).
     maxiter : int
