@@ -1,7 +1,7 @@
 # iaaft
 Iterated Amplitude Adjusted Fourier Transform time series surrogates
 
-![iaaft-surrogates-example][/example.png]
+![iaaft-surrogates-example](/example.png)
 
 ## References
 Venema, V., Ament, F. & Simmer, C. A stochastic iterative amplitude
