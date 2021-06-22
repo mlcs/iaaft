@@ -1,2 +1,2 @@
-# iafft
-Iterated Amplitude Adjusted Fast Fourier Transform time series surrogates
+# iaaft
+Iterated Amplitude Adjusted Fourier Transform time series surrogates
