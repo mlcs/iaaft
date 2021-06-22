@@ -9,12 +9,12 @@ iaaft - Iterative amplitude adjusted Fourier transform surrogates
 
 [1] Venema, V., Ament, F. & Simmer, C. A stochastic iterative amplitude
     adjusted Fourier Transform algorithm with improved accuracy (2006), Nonlin.
-    Proc. Geophys. 13, pp. 321--328  
+    Proc. Geophys. 13, pp. 321--328
     https://doi.org/10.5194/npg-13-321-2006
 
 """
 # Created: Tue Jun 22, 2021  09:44am
-# Last modified: Tue Jun 22, 2021  11:58am
+# Last modified: Tue Jun 22, 2021  12:38pm
 #
 # Copyright (C) 2021  Bedartha Goswami <bedartha.goswami@uni-tuebingen.de> This
 # program is free software: you can redistribute it and/or modify it under the
@@ -35,8 +35,8 @@ iaaft - Iterative amplitude adjusted Fourier transform surrogates
 import numpy as np
 from tqdm import tqdm
 
-@profile
-def surrogates(x, ns, TOL_PC=5., verbose=True):
+
+def surrogates(x, ns, tol_pc=5., verbose=True, maxiter=1E6, sorttype="quicksort"):
     """
     Returns iAAFT surrogates of given time series.
 
@@ -52,17 +52,34 @@ def surrogates(x, ns, TOL_PC=5., verbose=True):
         power spectrum is allowed.
     verbose : bool
         Show progress bar (default = `True`).
+    maxiter : int
+        Maximum number of iterations before which the algorithm should
+        converge. If the algorithm does not converge until this iteration
+        number is reached, the while loop breaks.
+    sorttype : string
+        Type of sorting algorithm to be used when the amplitudes of the newly
+        generated surrogate are to be adjusted to the original data. This
+        argument is passed on to `numpy.argsort`. Options include: 'quicksort',
+        'mergesort', 'heapsort', 'stable'. See `numpy.argsort` for further
+        information. Note that although quick sort can be a bit faster than 
+        merge sort or heap sort, it can, depending on the data, have worse case
+        spends that are much slower.
 
     Returns
     -------
     xs : numpy.ndarray, with shape (ns, N)
         Array containing the IAAFT surrogates of `x` such that each row of `xs`
         is an individual surrogate time series.
+
+    See Also
+    --------
+    numpy.argsort
+
     """
     # as per the steps given in Lancaster et al., Phys. Rep (2018)
     nx = x.shape[0]
     xs = np.zeros((ns, nx))
-    MAX_ITER = 10000
+    maxiter = 10000
     ii = np.arange(nx)
 
     # get the fft of the original array
@@ -70,6 +87,7 @@ def surrogates(x, ns, TOL_PC=5., verbose=True):
     x_srt = np.sort(x)
     r_orig = np.argsort(x)
 
+    # loop over surrogate number
     pb_fmt = "{desc:<5.5}{percentage:3.0f}%|{bar:30}{r_bar}"
     pb_desc = "Estimating IAAFT surrogates ..."
     for k in tqdm(range(ns), bar_format=pb_fmt, desc=pb_desc,
@@ -82,7 +100,8 @@ def surrogates(x, ns, TOL_PC=5., verbose=True):
         z_n = x[r_prev]
         percent_unequal = 100.
 
-        while (percent_unequal > TOL_PC) and (count < MAX_ITER):
+        # core iterative loop
+        while (percent_unequal > tol_pc) and (count < maxiter):
             r_prev = r_curr
 
             # 2) FFT current iteration yk, and then invert it but while
@@ -95,15 +114,15 @@ def surrogates(x, ns, TOL_PC=5., verbose=True):
             z_n = np.fft.ifft(x_amp * e_i_phi)
 
             # 3) rescale zk to the original distribution of x
-            r_curr = np.argsort(z_n)
+            r_curr = np.argsort(z_n, kind=sorttype)
             z_n[r_curr] = x_srt.copy()
             percent_unequal = ((r_curr != r_prev).sum() * 100.) / nx
 
             # 4) repeat until number of unequal entries between r_curr and 
-            # r_prev is less than TOL_PC percent
+            # r_prev is less than tol_pc percent
             count += 1
 
-        if count >= (MAX_ITER - 1):
+        if count >= (maxiter - 1):
             print("maximum number of iterations reached!")
 
         xs[k] = np.real(z_n)
